@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="fade-in">
+    <div class="container">
+        <div class="nav-header">
+            <h1>Order Management</h1>
+            <div class="nav-links">
+                <a href="admin-dashboard.html" class="nav-link">Home</a>
+                <a href="batch.html" class="nav-link">Receive Batch</a>
+                <a href="orders.html" class="nav-link active">Orders</a>
+                <a href="delivery.html" class="nav-link">Deliveries</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Create Order -->
+            <div class="card">
+                <h2>📝 New Order</h2>
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Shop Name (Optional)</label>
+                        <input type="text" id="shopName">
+                    </div>
+                    <div class="form-group">
+                        <label>Order Type</label>
+                        <select id="orderType">
+                            <option value="Consumer">Normal Consumer</option>
+                            <option value="Shop">Shop Owner</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Selling Price Per KG</label>
+                        <input type="number" id="sellingPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity (KG)</label>
+                        <input type="number" id="orderQty" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Amount (Auto-Calculated)</label>
+                        <input type="text" id="orderTotal" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Expected By</label>
+                        <input type="datetime-local" id="deliveryTime" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">Create Order</button>
+                </form>
+            </div>
+
+            <!-- List Orders -->
+            <div class="card" style="grid-column: span 2;">
+                <h2>Current Pending Orders</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Type</th>
+                                <th>Qty</th>
+                                <th>Amount</th>
+                                <th>Delivery Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/common.js"></script>
+    <script src="js/stock.js"></script>
+    <script src="js/orders.js"></script>
+</body>
+
+</html>

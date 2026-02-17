@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paneer Delivery - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="card neon-border fade-in" style="width: 100%; max-width: 400px; text-align: center;">
+            <h1 style="margin-bottom: 30px;">Paneer System</h1>
+
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <button onclick="quickLogin('admin')" class="btn btn-primary" style="font-size: 1.2em; padding: 15px;">
+                    Enter as Admin
+                </button>
+
+                <button onclick="quickLogin('delivery')" class="btn"
+                    style="background: #333; color: white; border: 1px solid #555; font-size: 1.2em; padding: 15px;">
+                    Enter as Delivery Boy
+                </button>
+            </div>
+
+            <p style="margin-top: 30px; color: #666; font-size: 0.9em;">
+                Authentication disabled for development
+            </p>
+        </div>
+    </div>
+    <script src="js/common.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

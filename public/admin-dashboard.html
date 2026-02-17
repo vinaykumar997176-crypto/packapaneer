@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="fade-in">
+    <div class="container">
+        <div class="nav-header">
+            <h1>Admin Dashboard</h1>
+            <div class="nav-links">
+                <a href="admin-dashboard.html" class="nav-link active">Home</a>
+                <a href="batch.html" class="nav-link">Receive Batch</a>
+                <a href="orders.html" class="nav-link">Orders</a>
+                <a href="delivery.html" class="nav-link">Deliveries</a>
+                <a href="report.html" class="nav-link">Reports</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card stat-card">
+                <div class="stat-label">Current Stock</div>
+                <div class="stat-value" id="stock-display">Loading...</div>
+                <div class="stat-label">Selling Price: <span id="price-display">...</span></div>
+            </div>
+
+            <a href="batch.html" class="card"
+                style="text-decoration:none; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <div class="stat-value" style="color:var(--neon-green)">+</div>
+                <div class="stat-label">New Batch</div>
+            </a>
+
+            <a href="orders.html" class="card"
+                style="text-decoration:none; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <div class="stat-value" style="color:var(--neon-green)">📝</div>
+                <div class="stat-label">Create Order</div>
+            </a>
+        </div>
+    </div>
+    <script src="js/common.js"></script>
+    <script src="js/stock.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth('admin');
+            loadStock();
+        });
+    </script>
+</body>
+
+</html>

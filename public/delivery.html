@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deliveries</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+
+<body class="fade-in">
+    <div class="container">
+        <div class="nav-header">
+            <h1>Delivery Dashboard</h1>
+            <div class="nav-links">
+                <!-- Links handled by JS based on role usually, but simplified here for demo -->
+                <a href="#" onclick="window.history.back()" class="nav-link">Back</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom:20px; color:var(--text-gray)">Pending Deliveries (Sorted by Time)</h2>
+
+        <div id="deliveryCards" class="dashboard-grid">
+            <!-- Populated by JS -->
+            <div style="text-align:center;width:100%">Loading...</div>
+        </div>
+    </div>
+    <script src="js/common.js"></script>
+    <script src="js/delivery.js"></script>
+</body>
+
+</html>
