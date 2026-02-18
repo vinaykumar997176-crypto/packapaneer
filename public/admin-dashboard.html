@@ -4,51 +4,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Admin Dashboard - Paneer House</title>
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="fade-in">
-    <div class="container">
-        <div class="nav-header">
-            <h1>Admin Dashboard</h1>
-            <div class="nav-links">
-                <a href="admin-dashboard.html" class="nav-link active">Home</a>
-                <a href="batch.html" class="nav-link">Receive Batch</a>
-                <a href="orders.html" class="nav-link">Orders</a>
-                <a href="delivery.html" class="nav-link">Deliveries</a>
-                <a href="report.html" class="nav-link">Reports</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-cheese"></i> Paneer House
             </div>
-        </div>
+            <a href="admin-dashboard.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="stock-financials.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock & Financials</a>
+            <a href="orders.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+            <a href="batch.html" class="nav-link"><i class="fas fa-box-open"></i> Receive Batch</a>
+            <a href="delivery.html" class="nav-link"><i class="fas fa-truck"></i> Delivery Status</a>
+            <div style="flex-grow: 1;"></div>
+            <a href="#" onclick="logout()" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
 
-        <div class="dashboard-grid">
-            <div class="card stat-card">
-                <div class="stat-label">Current Stock</div>
-                <div class="stat-value" id="stock-display">Loading...</div>
-                <div class="stat-label">Selling Price: <span id="price-display">...</span></div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="welcome-text">Dashboard Overview</h1>
+                <p class="date-display" id="currentDate">Monday, 1 Jan 2024</p>
             </div>
 
-            <a href="batch.html" class="card"
-                style="text-decoration:none; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                <div class="stat-value" style="color:var(--neon-green)">+</div>
-                <div class="stat-label">New Batch</div>
-            </a>
+            <!-- Stats Rows -->
+            <h2 class="section-title">Order Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Orders</div>
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-subtitle">All time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Completed</div>
+                    <div class="stat-value" id="completedOrders" style="color:#28a745">0</div>
+                    <div class="stat-subtitle">Successfully delivered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Pending</div>
+                    <div class="stat-value" id="pendingOrders" style="color:#ffc107">0</div>
+                    <div class="stat-subtitle">Needs action</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Total Sold (kg)</div>
+                    <div class="stat-value" id="totalSoldQty">0</div>
+                    <div class="stat-subtitle">Kilograms</div>
+                </div>
+            </div>
 
-            <a href="orders.html" class="card"
-                style="text-decoration:none; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                <div class="stat-value" style="color:var(--neon-green)">📝</div>
-                <div class="stat-label">Create Order</div>
-            </a>
-        </div>
+            <h2 class="section-title">Daily Financial Overview</h2>
+            <div class="stats-grid">
+                <!-- Daily Stock -->
+                <div class="stat-card">
+                    <div class="stat-title">Stock Arrived Today</div>
+                    <div class="stat-value" id="todayArrival">0 kg</div>
+                    <div class="stat-subtitle">New inventory</div>
+                </div>
+
+                <!-- Financials -->
+                <div class="stat-card">
+                    <div class="stat-title">Daily Selling Amount</div>
+                    <div class="stat-value" id="dailyRevenue">₹0</div>
+                    <div class="stat-subtitle">Total Revenue Today</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">Daily Purchase Cost</div>
+                    <div class="stat-value" id="dailyCost">₹0</div>
+                    <div class="stat-subtitle">Cost of goods sold today</div>
+                </div>
+            </div>
+
+            <div class="financial-summary">
+                <div class="stat-card profit-loss-card">
+                    <div class="stat-title">Daily Profit</div>
+                    <div class="stat-value" id="dailyProfit">₹0</div>
+                    <div class="stat-subtitle">Net earnings</div>
+                </div>
+                <div class="stat-card profit-loss-card" style="background:#2d1a1a;">
+                    <div class="stat-title">Daily Loss</div>
+                    <div class="stat-value" id="dailyLoss" style="color:#ff6b6b">₹0</div>
+                    <div class="stat-subtitle">Net loss (if any)</div>
+                </div>
+            </div>
+
+        </main>
     </div>
-    <script src="js/common.js"></script>
-    <script src="js/stock.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth('admin');
-            loadStock();
-        });
+        const logout = () => {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        };
+
+        // Date Display
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', options);
+
+        // Fetch Stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/dashboard/stats');
+                const data = await response.json();
+
+                // Orders
+                document.getElementById('totalOrders').textContent = data.orders.total_orders;
+                document.getElementById('completedOrders').textContent = data.orders.completed_orders || 0;
+                document.getElementById('pendingOrders').textContent = data.orders.pending_orders || 0;
+                document.getElementById('totalSoldQty').textContent = (data.orders.total_sold_qty || 0).toFixed(1);
+
+                // Stock Arrival
+                document.getElementById('todayArrival').textContent = (data.stock.today_arrival || 0) + ' kg';
+
+                // Financials
+                const fins = data.financials;
+                document.getElementById('dailyRevenue').textContent = '₹' + fins.daily_revenue.toLocaleString('en-IN');
+                document.getElementById('dailyCost').textContent = '₹' + fins.daily_cost.toLocaleString('en-IN');
+
+                const profit = fins.daily_profit;
+                if (profit >= 0) {
+                    document.getElementById('dailyProfit').textContent = '₹' + profit.toLocaleString('en-IN');
+                    document.getElementById('dailyLoss').textContent = '₹0';
+                } else {
+                    document.getElementById('dailyProfit').textContent = '₹0';
+                    document.getElementById('dailyLoss').textContent = '₹' + Math.abs(profit).toLocaleString('en-IN');
+                }
+
+            } catch (err) {
+                console.error("Error loading stats:", err);
+            }
+        }
+
+        // Auth Check
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.role !== 'admin') {
+            window.location.href = 'index.html';
+        }
+
+        loadStats();
     </script>
 </body>
 

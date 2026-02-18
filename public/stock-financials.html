@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock & Financials - Paneer House</title>
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-cheese"></i> Paneer House
+            </div>
+            <a href="admin-dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="stock-financials.html" class="nav-link active"><i class="fas fa-chart-line"></i> Stock &
+                Financials</a>
+            <a href="orders.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+            <a href="batch.html" class="nav-link"><i class="fas fa-box-open"></i> Receive Batch</a>
+            <a href="delivery.html" class="nav-link"><i class="fas fa-truck"></i> Delivery Status</a>
+            <div style="flex-grow: 1;"></div>
+            <a href="#" onclick="logout()" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="welcome-text">Stock & Financials</h1>
+            </div>
+
+            <!-- Stock Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Current Stock</div>
+                    <div class="stat-value" id="currentStock">Loading...</div>
+                    <div class="stat-subtitle">Available Quantity</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Purchase Price</div>
+                    <div class="stat-value" id="purchasePrice">...</div>
+                    <div class="stat-subtitle">Per Kg</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Selling Price</div>
+                    <div class="stat-value" id="sellingPrice">...</div>
+                    <div class="stat-subtitle">Per Kg</div>
+                </div>
+            </div>
+
+            <!-- Daily P&L Table -->
+            <div class="table-container">
+                <h2 class="section-title">Daily Profit & Loss (Last 7 Days)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Total Revenue</th>
+                            <th>Total Cost</th>
+                            <th>Net Profit/Loss</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="financialTableBody">
+                        <tr>
+                            <td colspan="5">Loading data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const logout = () => {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        };
+
+        async function loadFinancials() {
+            try {
+                // 1. Stock Data
+                const stockRes = await fetch('/api/stock');
+                const stock = await stockRes.json();
+
+                document.getElementById('currentStock').textContent = stock.current_stock + ' kg';
+                document.getElementById('purchasePrice').textContent = '₹' + stock.purchase_price_per_kg;
+                document.getElementById('sellingPrice').textContent = '₹' + stock.selling_price_per_kg;
+
+                // 2. Daily Report
+                const reportRes = await fetch('/api/reports/daily');
+                const report = await reportRes.json();
+
+                const tbody = document.getElementById('financialTableBody');
+                tbody.innerHTML = '';
+
+                if (report.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5">No financial data available for recent days.</td></tr>';
+                    return;
+                }
+
+                report.forEach(row => {
+                    const tr = document.createElement('tr');
+                    const isProfit = row.profit >= 0;
+                    const statusClass = isProfit ? 'status-delivered' : 'status-pending'; // Reusing classes for colors: Green/Yellow/Red
+                    const statusText = isProfit ? 'Profit' : 'Loss';
+                    const profitColor = isProfit ? 'green' : 'red';
+
+                    tr.innerHTML = `
+                        <td>${new Date(row.date).toLocaleDateString()}</td>
+                        <td>₹${row.revenue.toLocaleString()}</td>
+                        <td>₹${row.cost.toLocaleString()}</td>
+                        <td style="font-weight:bold; color:${profitColor}">₹${Math.abs(row.profit).toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Auth Check
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.role !== 'admin') {
+            window.location.href = 'index.html';
+        }
+
+        loadFinancials();
+    </script>
+</body>
+
+</html>

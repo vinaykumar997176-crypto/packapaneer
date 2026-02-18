@@ -4,52 +4,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Batch Receiving</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Receive Batch - Paneer House</title>
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="fade-in">
-    <div class="container">
-        <div class="nav-header">
-            <h1>Night Batch Receiving</h1>
-            <div class="nav-links">
-                <a href="admin-dashboard.html" class="nav-link">Home</a>
-                <a href="batch.html" class="nav-link active">Receive Batch</a>
-                <a href="orders.html" class="nav-link">Orders</a>
-                <a href="report.html" class="nav-link">Reports</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-cheese"></i> Paneer House
             </div>
-        </div>
+            <a href="admin-dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="stock-financials.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock & Financials</a>
+            <a href="orders.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+            <a href="batch.html" class="nav-link active"><i class="fas fa-box-open"></i> Receive Batch</a>
+            <a href="delivery.html" class="nav-link"><i class="fas fa-truck"></i> Delivery Status</a>
+            <div style="flex-grow: 1;"></div>
+            <a href="#" onclick="logout()" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
 
-        <div class="dashboard-grid">
-            <div class="card">
-                <h2>📦 Receive New Batch</h2>
-                <form id="batchForm">
-                    <div class="form-group">
-                        <label>Date & Time</label>
-                        <input type="datetime-local" id="batchDate" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Quantity Received (KG)</label>
-                        <input type="number" id="quantity" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Purchase Price Per KG (Buying Cost)</label>
-                        <input type="number" id="purchasePrice" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%">Add to Stock</button>
-                </form>
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="welcome-text">Receive Night Batch</h1>
             </div>
 
-            <div class="card stat-card">
-                <div class="stat-label">Current Stock</div>
-                <div class="stat-value" id="stock-display">Loading...</div>
+            <div class="grid-container" style="display:grid; grid-template-columns: 2fr 1fr; gap:2rem;">
+
+                <!-- Batch Form -->
+                <div class="table-container">
+                    <h2 class="section-title">Batch Details</h2>
+                    <form id="batchForm">
+                        <div class="form-group">
+                            <label>Date & Time</label>
+                            <input type="datetime-local" id="batchDate" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity Received (KG)</label>
+                            <input type="number" id="quantity" class="form-control" step="0.1" placeholder="e.g. 50.5"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Purchase Price Per KG (Buying Cost)</label>
+                            <input type="number" id="purchasePrice" class="form-control" placeholder="e.g. 350"
+                                required>
+                        </div>
+                        <button type="submit" class="btn-primary">Add to Stock</button>
+                    </form>
+                </div>
+
+                <!-- Stock Summary -->
+                <div class="stat-card">
+                    <div class="stat-title">Current Stock</div>
+                    <div class="stat-value" id="stock-display">Loading...</div>
+                    <div class="stat-subtitle">Available to sell</div>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
+
+    <!-- Reusing existing logic -->
     <script src="js/common.js"></script>
     <script src="js/stock.js"></script>
     <script src="js/batch.js"></script>
+    <script>
+        // Override logout if needed, strictly speaking common.js handles it or we do it inline matches common.js?
+        // common.js has logout() function, so we just call it.
+    </script>
 </body>
 
 </html>

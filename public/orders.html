@@ -4,87 +4,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Orders</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Manage Orders - Paneer House</title>
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="fade-in">
-    <div class="container">
-        <div class="nav-header">
-            <h1>Order Management</h1>
-            <div class="nav-links">
-                <a href="admin-dashboard.html" class="nav-link">Home</a>
-                <a href="batch.html" class="nav-link">Receive Batch</a>
-                <a href="orders.html" class="nav-link active">Orders</a>
-                <a href="delivery.html" class="nav-link">Deliveries</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-cheese"></i> Paneer House
             </div>
-        </div>
+            <a href="admin-dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="stock-financials.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock & Financials</a>
+            <a href="orders.html" class="nav-link active"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+            <a href="batch.html" class="nav-link"><i class="fas fa-box-open"></i> Receive Batch</a>
+            <a href="delivery.html" class="nav-link"><i class="fas fa-truck"></i> Delivery Status</a>
+            <div style="flex-grow: 1;"></div>
+            <a href="#" onclick="logout()" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
 
-        <div class="dashboard-grid">
-            <!-- Create Order -->
-            <div class="card">
-                <h2>📝 New Order</h2>
-                <form id="orderForm">
-                    <div class="form-group">
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="welcome-text">Order Management</h1>
+            </div>
+
+            <div class="table-container mb-4">
+                <h2 class="section-title">Create New Order</h2>
+                <form id="orderForm" class="order-form">
+                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
                         <label>Customer Name</label>
-                        <input type="text" id="customerName" required>
+                        <input type="text" id="customerName" class="form-control" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
                         <label>Shop Name (Optional)</label>
-                        <input type="text" id="shopName">
+                        <input type="text" id="shopName" class="form-control">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
                         <label>Order Type</label>
-                        <select id="orderType">
+                        <select id="orderType" class="form-control">
                             <option value="Consumer">Normal Consumer</option>
                             <option value="Shop">Shop Owner</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
                         <label>Selling Price Per KG</label>
-                        <input type="number" id="sellingPrice" required>
+                        <input type="number" id="sellingPrice" class="form-control" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
                         <label>Quantity (KG)</label>
-                        <input type="number" id="orderQty" step="0.1" required>
+                        <input type="number" id="orderQty" class="form-control" step="0.1" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
                         <label>Total Amount (Auto-Calculated)</label>
-                        <input type="text" id="orderTotal" readonly>
+                        <input type="text" id="orderTotal" class="form-control" readonly>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-12" style="width:100%;">
                         <label>Delivery Expected By</label>
-                        <input type="datetime-local" id="deliveryTime" required>
+                        <input type="datetime-local" id="deliveryTime" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%">Create Order</button>
+                    <button type="submit" class="btn-primary" style="width:auto; min-width:200px;">Create Order</button>
                 </form>
             </div>
 
             <!-- List Orders -->
-            <div class="card" style="grid-column: span 2;">
-                <h2>Current Pending Orders</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Customer</th>
-                                <th>Type</th>
-                                <th>Qty</th>
-                                <th>Amount</th>
-                                <th>Delivery Time</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersTableBody">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-container">
+                <h2 class="section-title">Recent Orders</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Type</th>
+                            <th>Qty</th>
+                            <th>Amount</th>
+                            <th>Delivery Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <tr>
+                            <td colspan="7">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </main>
     </div>
+
     <script src="js/common.js"></script>
     <script src="js/stock.js"></script>
     <script src="js/orders.js"></script>

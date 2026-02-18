@@ -4,34 +4,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paneer Delivery - Login</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <title>Paneer System - Login</title>
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
     <div class="auth-container">
-        <div class="card neon-border fade-in" style="width: 100%; max-width: 400px; text-align: center;">
-            <h1 style="margin-bottom: 30px;">Paneer System</h1>
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-overlay"></div>
+        </div>
 
-            <div style="display: flex; flex-direction: column; gap: 20px;">
-                <button onclick="quickLogin('admin')" class="btn btn-primary" style="font-size: 1.2em; padding: 15px;">
-                    Enter as Admin
-                </button>
+        <!-- Login Section -->
+        <div class="login-section">
+            <h1 class="brand-title">Paneer House</h1>
+            <p class="brand-subtitle">Premium Dairy Management System</p>
 
-                <button onclick="quickLogin('delivery')" class="btn"
-                    style="background: #333; color: white; border: 1px solid #555; font-size: 1.2em; padding: 15px;">
-                    Enter as Delivery Boy
-                </button>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="admin@paneer.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Sign In</button>
+            </form>
+            <div id="loading" style="display:none; text-align:center; margin-top:1rem; color: #666;">Verifying...</div>
+
+            <div class="demo-credentials"
+                style="margin-top: 2rem; padding: 1.5rem; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; font-size: 0.9rem; color: #555;">
+                <p style="margin-bottom:0.5rem; font-weight:600; color:var(--primary-gold);">Demo Credentials:</p>
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                    <span><strong>Admin:</strong> admin@paneer.com</span>
+                    <span>admin123</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span><strong>Delivery:</strong> delivery@paneer.com</span>
+                    <span>delivery123</span>
+                </div>
             </div>
-
-            <p style="margin-top: 30px; color: #666; font-size: 0.9em;">
-                Authentication disabled for development
-            </p>
         </div>
     </div>
-    <script src="js/common.js"></script>
-    <script src="js/auth.js"></script>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loading = document.getElementById('loading');
+
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    if (data.user.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'delivery.html';
+                    }
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred. Please try again.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -55,10 +55,18 @@ db.serialize(() => {
         type TEXT,
         quantity REAL,
         selling_price REAL,
+        purchase_price REAL, -- Added to track cost at time of order
         total_amount REAL,
         delivery_time DATETIME,
         status TEXT DEFAULT 'Pending'
-    )`);
+    )`, (err) => {
+        if (!err) {
+            // Migration: Add purchase_price column if it doesn't exist (for existing tables)
+            db.run("ALTER TABLE orders ADD COLUMN purchase_price REAL", (err) => {
+                // Ignore error if column already exists
+            });
+        }
+    });
 
     // Transactions Table
     db.run(`CREATE TABLE IF NOT EXISTS transactions (
@@ -135,28 +143,23 @@ app.post('/api/batch', (req, res) => {
 app.post('/api/orders', (req, res) => {
     const { customer_name, shop_name, type, quantity, selling_price, delivery_time } = req.body;
 
-    // Use provided selling price or fetch default if not provided (though frontend should provide it)
-    if (selling_price) {
-        const totalAmount = quantity * selling_price;
-        insertOrder(selling_price, totalAmount);
-    } else {
-        db.get("SELECT selling_price_per_kg FROM stock WHERE id = 1", (err, stockRow) => {
-            if (err) return res.status(500).json({ error: err.message });
-            const price = stockRow.selling_price_per_kg;
-            const total = quantity * price;
-            insertOrder(price, total);
-        });
-    }
+    // Fetch current stock details to get purchase price and selling price
+    db.get("SELECT selling_price_per_kg, purchase_price_per_kg FROM stock WHERE id = 1", (err, stockRow) => {
+        if (err) return res.status(500).json({ error: err.message });
 
-    function insertOrder(price, total) {
-        db.run(`INSERT INTO orders (customer_name, shop_name, type, quantity, selling_price, total_amount, delivery_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')`,
-            [customer_name, shop_name, type, quantity, price, total, delivery_time],
+        // Use provided selling price or default from stock
+        const price = selling_price || stockRow.selling_price_per_kg;
+        const purchaseCost = stockRow.purchase_price_per_kg; // Capture current purchase cost
+        const totalAmount = quantity * price;
+
+        db.run(`INSERT INTO orders (customer_name, shop_name, type, quantity, selling_price, purchase_price, total_amount, delivery_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`,
+            [customer_name, shop_name, type, quantity, price, purchaseCost, totalAmount, delivery_time],
             function (err) {
                 if (err) return res.status(500).json({ error: err.message });
                 res.json({ success: true, message: "Order created successfully", orderId: this.lastID });
             }
         );
-    }
+    });
 });
 
 // Get Orders
@@ -207,36 +210,88 @@ app.post('/api/deliver', (req, res) => {
     });
 });
 
-// Reports
-app.get('/api/report', (req, res) => {
+// Reports & Dashboard Stats
+app.get('/api/dashboard/stats', (req, res) => {
+    const today = new Date().toISOString().split('T')[0];
+
     db.serialize(() => {
-        const report = {};
+        const stats = {};
 
-        // Total Sold & Revenue
-        db.get("SELECT SUM(quantity) as total_sold, SUM(total_amount) as total_revenue FROM orders WHERE status = 'Delivered'", (err, row) => {
+        // 1. Order Counts
+        db.get(`SELECT 
+            COUNT(*) as total_orders,
+            SUM(CASE WHEN status = 'Delivered' THEN 1 ELSE 0 END) as completed_orders,
+            SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending_orders,
+            SUM(CASE WHEN status = 'Delivered' THEN quantity ELSE 0 END) as total_sold_qty
+            FROM orders`, (err, row) => {
             if (err) return res.status(500).json({ error: err.message });
-            report.total_sold = row?.total_sold || 0;
-            report.total_revenue = row?.total_revenue || 0;
 
-            // Batches Count
-            db.get("SELECT COUNT(*) as batches_count FROM batches", (err, row) => {
+            stats.orders = row;
+
+            // 2. Stock Info
+            db.get("SELECT current_stock, purchase_price_per_kg, selling_price_per_kg FROM stock WHERE id = 1", (err, row) => {
                 if (err) return res.status(500).json({ error: err.message });
-                report.batches_count = row?.batches_count || 0;
+                stats.stock = row;
 
-                // Pending Amount
-                db.get("SELECT SUM(total_amount) as pending_amount FROM orders WHERE status = 'Pending'", (err, row) => {
+                // 3. Today's Financials (Profit/Loss)
+                // Profit = (Selling Price - Purchase Price) * Quantity for delivered orders
+                // We use the recorded purchase_price in orders table if available, else fall back to current stock price (legacy support)
+                db.all(`SELECT quantity, selling_price, purchase_price, total_amount FROM orders WHERE status = 'Delivered' AND date(delivery_time) = date('now')`, (err, rows) => {
                     if (err) return res.status(500).json({ error: err.message });
-                    report.pending_amount = row?.pending_amount || 0;
 
-                    // Stock
-                    db.get("SELECT current_stock FROM stock WHERE id = 1", (err, row) => {
+                    let dailyRevenue = 0;
+                    let dailyCost = 0;
+
+                    rows.forEach(order => {
+                        dailyRevenue += order.total_amount; // already qty * selling_price
+                        // if purchase_price is null (old orders), use current stock price as an estimate, 
+                        // or better, 0/ignore to avoid wrong data. Let's use current stock price as fallback? 
+                        // No, let's look at what we have. If purchase_price is missing, we can't calculate exact profit. 
+                        // But for "Daily Profit", visual consistency is key. Let's estimate with current purchase price if missing.
+                        const costPerKg = order.purchase_price || stats.stock.purchase_price_per_kg;
+                        dailyCost += (order.quantity * costPerKg);
+                    });
+
+                    stats.financials = {
+                        daily_revenue: dailyRevenue,
+                        daily_cost: dailyCost,
+                        daily_profit: dailyRevenue - dailyCost
+                    };
+
+                    // Daily Stock Arrival
+                    db.get(`SELECT SUM(quantity) as today_arrival FROM batches WHERE date(timestamp) = date('now')`, (err, row) => {
                         if (err) return res.status(500).json({ error: err.message });
-                        report.current_stock = row?.current_stock || 0;
-                        res.json(report);
+                        stats.stock.today_arrival = row?.today_arrival || 0;
+
+                        res.json(stats);
                     });
                 });
             });
         });
+    });
+});
+
+app.get('/api/reports/daily', (req, res) => {
+    // Returns last 7 days P&L
+    db.all(`SELECT 
+        date(delivery_time) as date,
+        SUM(total_amount) as revenue,
+        SUM(quantity * COALESCE(purchase_price, (SELECT purchase_price_per_kg FROM stock WHERE id=1))) as cost
+        FROM orders 
+        WHERE status = 'Delivered'
+        GROUP BY date(delivery_time)
+        ORDER BY date(delivery_time) DESC
+        LIMIT 7`, (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const report = rows.map(r => ({
+            date: r.date,
+            revenue: r.revenue,
+            cost: r.cost,
+            profit: r.revenue - r.cost
+        }));
+
+        res.json(report);
     });
 });
 

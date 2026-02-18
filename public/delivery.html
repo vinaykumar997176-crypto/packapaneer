@@ -4,31 +4,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deliveries</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <title>Delivery Dashboard - Paneer House</title>
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="fade-in">
-    <div class="container">
-        <div class="nav-header">
-            <h1>Delivery Dashboard</h1>
-            <div class="nav-links">
-                <!-- Links handled by JS based on role usually, but simplified here for demo -->
-                <a href="#" onclick="window.history.back()" class="nav-link">Back</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar (Simplified for Delivery) -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-truck"></i> Delivery Panel
+            </div>
+            <a href="delivery.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+            <div style="flex-grow: 1;"></div>
+            <a href="#" onclick="logout()" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="welcome-text" id="welcomeMsg">Welcome, Delivery Partner</h1>
+                <p class="date-display" id="currentDate">...</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Pending Deliveries</div>
+                    <div class="stat-value" id="pendingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Completed Deliveries</div>
+                    <div class="stat-value" id="completedCount" style="color:#28a745">0</div>
+                </div>
+            </div>
+
+            <!-- Pending Orders List -->
+            <div class="table-container">
+                <h2 class="section-title">Pending Deliveries</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Shop Name</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingTableBody">
+                        <tr>
+                            <td colspan="5">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Completed Orders List -->
+            <div class="table-container">
+                <h2 class="section-title">Completed Deliveries</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Shop Name</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="completedTableBody">
+                        <tr>
+                            <td colspan="5">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+        <div style="background:white; padding:2rem; border-radius:12px; width:300px;">
+            <h3 style="margin-bottom:1rem;">Confirm Delivery</h3>
+            <p style="margin-bottom:1rem;">Select Payment Mode:</p>
+            <select id="paymentMode" class="form-control" style="margin-bottom:1rem;">
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Credit">Credit/Later</option>
+            </select>
+            <div style="display:flex; gap:1rem;">
+                <button onclick="confirmDelivery()" class="btn-primary" style="margin-top:0;">Confirm</button>
+                <button onclick="closeModal()" class="btn-action btn-view">Cancel</button>
             </div>
         </div>
-
-        <h2 style="margin-bottom:20px; color:var(--text-gray)">Pending Deliveries (Sorted by Time)</h2>
-
-        <div id="deliveryCards" class="dashboard-grid">
-            <!-- Populated by JS -->
-            <div style="text-align:center;width:100%">Loading...</div>
-        </div>
     </div>
-    <script src="js/common.js"></script>
-    <script src="js/delivery.js"></script>
+
+    <script>
+        let currentOrderId = null;
+
+        const logout = () => {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        };
+
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+
+        async function loadData() {
+            try {
+                // Fetch all orders
+                const res = await fetch('/api/orders');
+                const orders = await res.json();
+
+                const pending = orders.filter(o => o.status === 'Pending');
+                const completed = orders.filter(o => o.status === 'Delivered');
+
+                document.getElementById('pendingCount').textContent = pending.length;
+                document.getElementById('completedCount').textContent = completed.length;
+
+                // Pending Table
+                const pBody = document.getElementById('pendingTableBody');
+                pBody.innerHTML = '';
+                if (pending.length === 0) pBody.innerHTML = '<tr><td colspan="5">No pending deliveries.</td></tr>';
+                pending.forEach(o => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>#${o.id}</td>
+                        <td>${o.shop_name}<br><small>${o.customer_name}</small></td>
+                        <td>${o.quantity} kg</td>
+                        <td>₹${o.total_amount}</td>
+                        <td><button onclick="openModal(${o.id})" class="btn-action btn-complete">Mark Delivered</button></td>
+                    `;
+                    pBody.appendChild(tr);
+                });
+
+                // Completed Table
+                const cBody = document.getElementById('completedTableBody');
+                cBody.innerHTML = '';
+                if (completed.length === 0) cBody.innerHTML = '<tr><td colspan="5">No completed deliveries yet.</td></tr>';
+                completed.forEach(o => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                         <td>#${o.id}</td>
+                        <td>${o.shop_name}</td>
+                        <td>${o.quantity} kg</td>
+                        <td>₹${o.total_amount}</td>
+                        <td><span class="status-badge status-delivered">Delivered</span></td>
+                    `;
+                    cBody.appendChild(tr);
+                });
+
+            } catch (e) { console.error(e); }
+        }
+
+        function openModal(id) {
+            currentOrderId = id;
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            currentOrderId = null;
+        }
+
+        async function confirmDelivery() {
+            if (!currentOrderId) return;
+            const mode = document.getElementById('paymentMode').value;
+
+            try {
+                const res = await fetch('/api/deliver', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: currentOrderId, paymentMode: mode })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal();
+                    loadData();
+                } else {
+                    alert(data.error);
+                }
+            } catch (e) {
+                alert('Error delivering order');
+            }
+        }
+
+        // Auth Check (Allow Admin or Delivery)
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) window.location.href = 'index.html';
+
+        loadData();
+    </script>
 </body>
 
 </html>
