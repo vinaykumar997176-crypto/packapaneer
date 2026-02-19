@@ -7,7 +7,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- CONFIGURATION ---
 const EMAIL = 'admin@paneer.com';
-const NEW_PASSWORD = 'prashant@123 ';
+const NEW_PASSWORD = 'prashant@123';
 // ---------------------
 
 async function updatePassword() {
