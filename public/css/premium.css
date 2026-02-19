@@ -339,6 +339,99 @@ tr:hover {
     flex: 0 0 calc(50% - 0.75rem);
 }
 
-.col-md-12 {
-    flex: 0 0 100%;
+
+/* --- Mobile Optimization --- */
+@media (max-width: 768px) {
+
+    /* Login Page */
+    .auth-container {
+        flex-direction: column;
+    }
+
+    .hero-section {
+        display: none;
+        /* Hide hero image on mobile to focus on login */
+    }
+
+    .login-section {
+        flex: 1;
+        width: 100%;
+        padding: 2rem;
+        box-shadow: none;
+    }
+
+    .brand-title {
+        font-size: 2rem;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 1rem;
+        flex-direction: row;
+        overflow-x: auto;
+        /* Horizontal scroll for nav links */
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .sidebar-brand {
+        margin-bottom: 0;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+        white-space: nowrap;
+    }
+
+    .nav-link {
+        margin-bottom: 0;
+        white-space: nowrap;
+        padding: 0.5rem 1rem;
+    }
+
+    .main-content {
+        padding: 1.5rem;
+    }
+
+    /* Grids & Columns */
+    .financial-summary {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .col-md-6 {
+        flex: 0 0 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        /* Stack stats cards */
+        gap: 1rem;
+    }
+
+    /* Tables */
+    .table-container {
+        padding: 1rem;
+        margin: 0 -1rem;
+        /* Negative margin to span full width */
+        width: calc(100% + 2rem);
+        border-radius: 0;
+    }
+
+    th,
+    td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .page-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .welcome-text {
+        font-size: 1.5rem;
+    }
 }

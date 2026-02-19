@@ -13,10 +13,8 @@ const NEW_PASSWORD = 'prashant@123';
 async function updatePassword() {
     console.log(`Updating password for ${EMAIL}...`);
 
-    if (NEW_PASSWORD === 'prashant@123') {
-        console.error("❌ Please edit this file and replace 'ENTER_YOUR_NEW_PASSWORD_HERE' with your desired password.");
-        return;
-    }
+    // Check removed to allow the custom password
+    // if (NEW_PASSWORD === 'ENTER_YOUR_NEW_PASSWORD_HERE') ...
 
     const { data, error } = await supabase
         .from('users')
