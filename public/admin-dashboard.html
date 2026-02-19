@@ -10,15 +10,23 @@
 </head>
 
 <body>
+    <!-- Mobile Header -->
+    <header class="mobile-header mobile-only">
+        <div class="mobile-brand"><i class="fas fa-cheese" style="color:var(--primary-gold)"></i> Paneer House</div>
+        <div class="user-profile">
+            <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #666;"></i>
+        </div>
+    </header>
+
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
+        <!-- Sidebar (Desktop Only) -->
+        <nav class="sidebar desktop-only">
             <div class="sidebar-brand">
                 <i class="fas fa-cheese"></i> Paneer House
             </div>
             <a href="admin-dashboard.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="stock-financials.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock & Financials</a>
             <a href="orders.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+            <a href="stock-financials.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock & Financials</a>
             <a href="batch.html" class="nav-link"><i class="fas fa-box-open"></i> Receive Batch</a>
             <a href="delivery.html" class="nav-link"><i class="fas fa-truck"></i> Delivery Status</a>
             <div style="flex-grow: 1;"></div>
@@ -27,74 +35,101 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="page-header">
+            <div class="page-header desktop-only">
                 <h1 class="welcome-text">Dashboard Overview</h1>
-                <p class="date-display" id="currentDate">Monday, 1 Jan 2024</p>
+                <p class="date-display" id="currentDateDesktop">Monday, 1 Jan 2024</p>
             </div>
 
-            <!-- Stats Rows -->
-            <h2 class="section-title">Order Statistics</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-title">Total Orders</div>
-                    <div class="stat-value" id="totalOrders">0</div>
-                    <div class="stat-subtitle">All time</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Completed</div>
-                    <div class="stat-value" id="completedOrders" style="color:#28a745">0</div>
-                    <div class="stat-subtitle">Successfully delivered</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Pending</div>
-                    <div class="stat-value" id="pendingOrders" style="color:#ffc107">0</div>
-                    <div class="stat-subtitle">Needs action</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Total Sold (kg)</div>
-                    <div class="stat-value" id="totalSoldQty">0</div>
-                    <div class="stat-subtitle">Kilograms</div>
-                </div>
+            <div class="mobile-only" style="margin-bottom: 1.5rem;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 0.2rem;">Good Morning, Admin</h2>
+                <p class="date-display" id="currentDateMobile" style="font-size: 0.9rem;">Monday, 1 Jan 2024</p>
             </div>
 
-            <h2 class="section-title">Daily Financial Overview</h2>
-            <div class="stats-grid">
-                <!-- Daily Stock -->
-                <div class="stat-card">
-                    <div class="stat-title">Stock Arrived Today</div>
-                    <div class="stat-value" id="todayArrival">0 kg</div>
-                    <div class="stat-subtitle">New inventory</div>
+            <!-- Quick Actions (Mobile Priority) -->
+            <section>
+                <h3 class="section-title" style="font-size: 1.1rem; border-bottom: none; margin-bottom: 1rem;">Quick
+                    Actions</h3>
+                <div class="quick-actions">
+                    <a href="orders.html" class="action-card">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>New Order</span>
+                    </a>
+                    <a href="batch.html" class="action-card" style="background: #2d1a1a;">
+                        <i class="fas fa-box"></i>
+                        <span>Add Batch</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Key Stats (Horizontal Scroll) -->
+            <section>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h3 class="section-title" style="font-size: 1.1rem; border-bottom: none; margin-bottom: 0;">Today's
+                        Overview</h3>
+                    <a href="stock-financials.html"
+                        style="font-size:0.8rem; color:var(--primary-gold); text-decoration:none;">View All</a>
                 </div>
 
-                <!-- Financials -->
-                <div class="stat-card">
-                    <div class="stat-title">Daily Selling Amount</div>
-                    <div class="stat-value" id="dailyRevenue">₹0</div>
-                    <div class="stat-subtitle">Total Revenue Today</div>
+                <div class="stats-scroller">
+                    <!-- Revenue -->
+                    <div class="stat-card">
+                        <div class="stat-title">Daily Revenue</div>
+                        <div class="stat-value" id="dailyRevenue">₹0</div>
+                        <div class="stat-subtitle">Today's Sales</div>
+                    </div>
+                    <!-- Stock -->
+                    <div class="stat-card">
+                        <div class="stat-title">Current Stock</div>
+                        <div class="stat-value" id="currentStock">0 kg</div>
+                        <div class="stat-subtitle">Available</div>
+                    </div>
+                    <!-- Orders -->
+                    <div class="stat-card">
+                        <div class="stat-title">Unfulfilled Orders</div>
+                        <div class="stat-value" id="pendingOrders" style="color: #ffc107">0</div>
+                        <div class="stat-subtitle">Pending Delivery</div>
+                    </div>
+                    <!-- Profit -->
+                    <div class="stat-card">
+                        <div class="stat-title">Daily Profit</div>
+                        <div class="stat-value" id="dailyProfit" style="color: #28a745">₹0</div>
+                        <div class="stat-subtitle">Net Earnings</div>
+                    </div>
                 </div>
+            </section>
 
-                <div class="stat-card">
-                    <div class="stat-title">Daily Purchase Cost</div>
-                    <div class="stat-value" id="dailyCost">₹0</div>
-                    <div class="stat-subtitle">Cost of goods sold today</div>
+            <!-- Recent Activity Placeholder (Optional) -->
+            <section style="margin-top: 2rem;">
+                <h3 class="section-title" style="font-size: 1.1rem; border-bottom: none; margin-bottom: 1rem;">Recent
+                    Activity</h3>
+                <div
+                    style="background:white; padding:1.5rem; border-radius:16px; text-align:center; color:#999; font-size:0.9rem;">
+                    No recent notifications
                 </div>
-            </div>
-
-            <div class="financial-summary">
-                <div class="stat-card profit-loss-card">
-                    <div class="stat-title">Daily Profit</div>
-                    <div class="stat-value" id="dailyProfit">₹0</div>
-                    <div class="stat-subtitle">Net earnings</div>
-                </div>
-                <div class="stat-card profit-loss-card" style="background:#2d1a1a;">
-                    <div class="stat-title">Daily Loss</div>
-                    <div class="stat-value" id="dailyLoss" style="color:#ff6b6b">₹0</div>
-                    <div class="stat-subtitle">Net loss (if any)</div>
-                </div>
-            </div>
+            </section>
 
         </main>
     </div>
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="bottom-nav mobile-only">
+        <a href="admin-dashboard.html" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="orders.html" class="nav-item">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Orders</span>
+        </a>
+        <a href="stock-financials.html" class="nav-item">
+            <i class="fas fa-chart-pie"></i>
+            <span>Stock</span>
+        </a>
+        <a href="#" onclick="logout()" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
 
     <script>
         const logout = () => {
@@ -104,7 +139,9 @@
 
         // Date Display
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', options);
+        const dateStr = new Date().toLocaleDateString('en-IN', options);
+        if (document.getElementById('currentDateDesktop')) document.getElementById('currentDateDesktop').textContent = dateStr;
+        if (document.getElementById('currentDateMobile')) document.getElementById('currentDateMobile').textContent = dateStr;
 
         // Fetch Stats
         async function loadStats() {
@@ -113,26 +150,23 @@
                 const data = await response.json();
 
                 // Orders
-                document.getElementById('totalOrders').textContent = data.orders.total_orders;
-                document.getElementById('completedOrders').textContent = data.orders.completed_orders || 0;
-                document.getElementById('pendingOrders').textContent = data.orders.pending_orders || 0;
-                document.getElementById('totalSoldQty').textContent = (data.orders.total_sold_qty || 0).toFixed(1);
+                // Note: Some IDs like 'totalOrders' were removed in mobile view to simplify
+                if (document.getElementById('pendingOrders')) document.getElementById('pendingOrders').textContent = data.orders.pending_orders || 0;
 
-                // Stock Arrival
-                document.getElementById('todayArrival').textContent = (data.stock.today_arrival || 0) + ' kg';
+                // Stock
+                if (document.getElementById('currentStock')) document.getElementById('currentStock').textContent = (data.stock.current_stock || 0) + ' kg';
 
                 // Financials
                 const fins = data.financials;
-                document.getElementById('dailyRevenue').textContent = '₹' + fins.daily_revenue.toLocaleString('en-IN');
-                document.getElementById('dailyCost').textContent = '₹' + fins.daily_cost.toLocaleString('en-IN');
+                if (document.getElementById('dailyRevenue')) document.getElementById('dailyRevenue').textContent = '₹' + fins.daily_revenue.toLocaleString('en-IN');
 
                 const profit = fins.daily_profit;
-                if (profit >= 0) {
+                if (document.getElementById('dailyProfit')) {
                     document.getElementById('dailyProfit').textContent = '₹' + profit.toLocaleString('en-IN');
-                    document.getElementById('dailyLoss').textContent = '₹0';
-                } else {
-                    document.getElementById('dailyProfit').textContent = '₹0';
-                    document.getElementById('dailyLoss').textContent = '₹' + Math.abs(profit).toLocaleString('en-IN');
+                    if (profit < 0) {
+                        document.getElementById('dailyProfit').style.color = '#ff6b6b';
+                        document.getElementById('dailyProfit').textContent = '₹' + profit.toLocaleString('en-IN'); // Show negative or handle loss
+                    }
                 }
 
             } catch (err) {

@@ -10,61 +10,64 @@
 </head>
 
 <body>
+    <!-- Mobile Header -->
+    <header class="mobile-header mobile-only">
+        <div class="mobile-brand">Manage Orders</div>
+        <div class="user-profile">
+            <a href="admin-dashboard.html" style="color:#666;"><i class="fas fa-arrow-left"
+                    style="font-size: 1.2rem;"></i></a>
+        </div>
+    </header>
+
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
+        <!-- Sidebar (Desktop Only) -->
+        <nav class="sidebar desktop-only">
             <div class="sidebar-brand">
                 <i class="fas fa-cheese"></i> Paneer House
             </div>
             <a href="admin-dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="stock-financials.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock & Financials</a>
             <a href="orders.html" class="nav-link active"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+            <a href="stock-financials.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock & Financials</a>
             <a href="batch.html" class="nav-link"><i class="fas fa-box-open"></i> Receive Batch</a>
             <a href="delivery.html" class="nav-link"><i class="fas fa-truck"></i> Delivery Status</a>
             <div style="flex-grow: 1;"></div>
             <a href="#" onclick="logout()" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
 
+        <!-- Main Content -->
         <main class="main-content">
-            <div class="page-header">
-                <h1 class="welcome-text">Order Management</h1>
+            <div class="page-header desktop-only">
+                <h1 class="welcome-text">Manage Orders</h1>
             </div>
 
-            <div class="table-container mb-4">
-                <h2 class="section-title">Create New Order</h2>
+            <!-- Order Form -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">New Order</h3>
                 <form id="orderForm" class="order-form">
-                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
+                    <!-- Form fields remain same, just ensure responsiveness -->
+                    <div class="form-group col-md-6" style="flex:1 1 100%;">
                         <label>Customer Name</label>
-                        <input type="text" id="customerName" class="form-control" required>
+                        <input type="text" id="custName" class="form-control" required>
                     </div>
-                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
+                    <div class="form-group col-md-6" style="flex:1 1 100%;">
                         <label>Shop Name (Optional)</label>
                         <input type="text" id="shopName" class="form-control">
                     </div>
-                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
-                        <label>Order Type</label>
-                        <select id="orderType" class="form-control">
-                            <option value="Consumer">Normal Consumer</option>
-                            <option value="Shop">Shop Owner</option>
-                        </select>
+                    <div class="form-group col-md-6" style="flex:1 1 100%;">
+                        <label>Quantity (kg)</label>
+                        <input type="number" id="qty" class="form-control" step="0.1" required>
                     </div>
-                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
-                        <label>Selling Price Per KG</label>
-                        <input type="number" id="sellingPrice" class="form-control" required>
-                    </div>
-                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
-                        <label>Quantity (KG)</label>
-                        <input type="number" id="orderQty" class="form-control" step="0.1" required>
-                    </div>
-                    <div class="form-group col-md-6" style="flex:1; min-width:300px;">
-                        <label>Total Amount (Auto-Calculated)</label>
-                        <input type="text" id="orderTotal" class="form-control" readonly>
+                    <div class="form-group col-md-6" style="flex:1 1 100%;">
+                        <label>Selling Price / kg</label>
+                        <input type="number" id="price" class="form-control" placeholder="Auto-filled from Stock">
                     </div>
                     <div class="form-group col-md-12" style="width:100%;">
                         <label>Delivery Expected By</label>
                         <input type="datetime-local" id="deliveryTime" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn-primary" style="width:auto; min-width:200px;">Create Order</button>
+                    <div class="form-group col-md-12" style="flex:1 1 100%;">
+                        <button type="submit" class="btn btn-primary" style="width:100%;">Create Order</button>
+                    </div>
                 </form>
             </div>
 

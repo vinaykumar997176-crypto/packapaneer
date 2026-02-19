@@ -10,24 +10,34 @@
 </head>
 
 <body>
+    <!-- Mobile Header -->
+    <header class="mobile-header mobile-only">
+        <div class="mobile-brand">Stock & Finance</div>
+        <div class="user-profile">
+            <a href="admin-dashboard.html" style="color:#666;"><i class="fas fa-arrow-left"
+                    style="font-size: 1.2rem;"></i></a>
+        </div>
+    </header>
+
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
+        <!-- Sidebar (Desktop Only) -->
+        <nav class="sidebar desktop-only">
             <div class="sidebar-brand">
                 <i class="fas fa-cheese"></i> Paneer House
             </div>
             <a href="admin-dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="orders.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
             <a href="stock-financials.html" class="nav-link active"><i class="fas fa-chart-line"></i> Stock &
                 Financials</a>
-            <a href="orders.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
             <a href="batch.html" class="nav-link"><i class="fas fa-box-open"></i> Receive Batch</a>
             <a href="delivery.html" class="nav-link"><i class="fas fa-truck"></i> Delivery Status</a>
             <div style="flex-grow: 1;"></div>
             <a href="#" onclick="logout()" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
 
+        <!-- Main Content -->
         <main class="main-content">
-            <div class="page-header">
+            <div class="page-header desktop-only">
                 <h1 class="welcome-text">Stock & Financials</h1>
             </div>
 
@@ -35,31 +45,31 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Current Stock</div>
-                    <div class="stat-value" id="currentStock">Loading...</div>
+                    <div class="stat-value" id="currentStock">0 kg</div>
                     <div class="stat-subtitle">Available Quantity</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Purchase Price</div>
-                    <div class="stat-value" id="purchasePrice">...</div>
+                    <div class="stat-value" id="purchasePrice">₹0</div>
                     <div class="stat-subtitle">Per Kg</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Selling Price</div>
-                    <div class="stat-value" id="sellingPrice">...</div>
+                    <div class="stat-value" id="sellingPrice">₹0</div>
                     <div class="stat-subtitle">Per Kg</div>
                 </div>
             </div>
 
-            <!-- Daily P&L Table -->
+            <!-- Financial Report Table -->
             <div class="table-container">
-                <h2 class="section-title">Daily Profit & Loss (Last 7 Days)</h2>
-                <table>
+                <h3 style="margin-bottom: 1rem;">Daily Reports (Last 7 Days)</h3>
+                <table id="reportTable">
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Total Revenue</th>
-                            <th>Total Cost</th>
-                            <th>Net Profit/Loss</th>
+                            <th>Rev</th>
+                            <th>Cost</th>
+                            <th>Profit</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -70,6 +80,7 @@
                     </tbody>
                 </table>
             </div>
+
         </main>
     </div>
 
